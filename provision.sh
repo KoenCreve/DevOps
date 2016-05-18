@@ -3,26 +3,23 @@
 echo "Provisioning virtual machine..."
 
 echo "installing NGINX"
+apt-get update
+apt-get upgrade -y
 apt-get install nginx -y
 
-echo "Updating PHP repository"
-    apt-get install python-software-properties build-essential
-    add-apt-repository ppa:ondrej/php5 -y
-    apt-get update
+rm /etc/nginx/sites-enabled/default
+ln -s /vagrant/nginx_vhost /etc/nginx/sites-enabled
+
+echo "installing apache"
+apt-get install apache2 -y
+rm -r /var/www/html
+ln -s /vagrant/nginx_vhost /var/www/html
 
 echo "installing PHP"
-   apt-get install php5-common php5-dev php5-cli php5-fpm -y
-    
-echo "Installing PHP extensions"
-   apt-get install curl php5-curl php5-gd php5-mcrypt php5-mysql -y
+ 
+apt-get install php5-fpm -y
 
-echo "Configuring Nginx"
-   cp /var/www/provision/config/nginx_vhost /etc/nginx/sites-available/nginx_vhost
-   
-   ln -s /etc/nginx/sites-available/nginx_vhost /etc/nginx/sites-enabled/
+service php5-fpm restart
+service nginx restart
 
-   rm -rf /etc/nginx/sites-available/default
-
-# Restart Nginx for the config to take effect
-   service nginx restart
 
